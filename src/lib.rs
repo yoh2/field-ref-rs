@@ -44,7 +44,7 @@ impl<T, U> FieldRef<T, U> {
     }
 
     /// Get a mutable reference of value in an object to which `FieldRef` refers.
-    pub fn get_mut_ref<'a, 'b>(self, obj: &'b mut T) -> &'b mut U {
+    pub fn get_mut<'a, 'b>(self, obj: &'b mut T) -> &'b mut U {
         let addr = obj as *mut _ as usize + self.offset;
         unsafe { &mut *(addr as *mut U) }
     }
@@ -77,7 +77,7 @@ pub trait Field where Self: Sized {
 
 pub trait FieldMut where Self: Sized {
     fn field_mut<T>(&mut self, fr: FieldRef<Self, T>) -> &mut T {
-        fr.get_mut_ref(self)
+        fr.get_mut(self)
     }
 }
 
@@ -104,7 +104,7 @@ mod tests {
         assert_eq!(fr1.get_ref(&foo), &10);
         assert_eq!(foo.field(fr2), &20);
 
-        *fr2.get_mut_ref(&mut foo) = 30;
+        *fr2.get_mut(&mut foo) = 30;
         *foo.field_mut(fr1) = 40;
         assert_eq!(foo.0, 40);
         assert_eq!(foo.1, 30);
