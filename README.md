@@ -1,4 +1,6 @@
-# field-ref: Field reference (like a member pointer to non-static data field in C++) for Rust
+# field-ref
+
+Field reference (like a member pointer to non-static data field in C++) for Rust
 
 Example:
 
