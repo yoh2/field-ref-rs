@@ -39,6 +39,7 @@
 //!
 
 use std::marker::PhantomData;
+use std::cmp::{Eq, PartialEq, Ord, PartialOrd, Ordering};
 
 ///
 /// Creates a new `FieldRef` from basic type and fields which are (recursively) contained by that type.
@@ -212,6 +213,26 @@ impl<T, U> std::fmt::Debug for FieldRef<T, U> {
     }
 }
 
+impl<T, U> PartialEq for FieldRef<T, U> {
+    fn eq(&self, other: &Self) -> bool {
+        self.offset == other.offset
+    }
+}
+
+impl<T, U> Eq for FieldRef<T, U> {}
+
+impl<T, U> PartialOrd for FieldRef<T, U> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.offset.partial_cmp(&other.offset)
+    }
+}
+
+impl<T, U> Ord for FieldRef<T, U> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.offset.cmp(&other.offset)
+    }
+}
+
 ///
 /// A trait to obtain a value to which `FieldRef` references via description like `obj.field(field_ref)'.
 /// 
@@ -314,5 +335,29 @@ mod tests {
     fn debug_test() {
         let fr = unsafe { FieldRef::<Foo, u32>::from_offset(100) };
         assert_eq!(format!("{:?}", fr), "FieldRef { offset: 100 }");
+    }
+
+    #[test]
+    fn eq_test() {
+        let fr1 = field_ref_of!(Bar => foo => 1);
+        let fr2 = field_ref_of!(Bar => foo);
+        let fr3 = field_ref_of!(Foo => 1);
+        let fr4 = field_ref_of!(Bar => x);
+
+        assert!(fr1 != fr4);
+        assert!(fr1 == fr2.chain(fr3));
+    }
+
+    #[test]
+    fn ord_test() {
+        let fr1 = field_ref_of!(Bar => foo => 0);
+        let fr2 = field_ref_of!(Bar => foo => 1);
+        let fr3 = field_ref_of!(Bar => foo);
+        let fr4 = field_ref_of!(Foo => 1);
+
+        assert_eq!(fr1.cmp(&fr2), Ordering::Less);
+        assert_eq!(fr2.cmp(&fr1), Ordering::Greater);
+        assert_eq!(fr2.cmp(&fr3.chain(fr4)), Ordering::Equal);
+
     }
 }
