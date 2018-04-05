@@ -296,6 +296,7 @@ impl<S: Sized> FieldMut for S {
 mod tests {
     use super::*;
 
+    #[repr(C)] // to guarantee the result of Ord test
     struct Foo(u32, u32);
 
     struct Bar {
@@ -358,6 +359,5 @@ mod tests {
         assert_eq!(fr1.cmp(&fr2), Ordering::Less);
         assert_eq!(fr2.cmp(&fr1), Ordering::Greater);
         assert_eq!(fr2.cmp(&fr3.chain(fr4)), Ordering::Equal);
-
     }
 }
