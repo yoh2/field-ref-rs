@@ -168,7 +168,7 @@ impl<T, U> FieldRef<T, U> {
     /// assert_eq!(foo.1, 30);
     /// # }
     /// ```
-    pub fn get_mut<'a, 'b>(self, obj: &'b mut T) -> &'b mut U {
+    pub fn get_mut<'a, 'b>(&'a self, obj: &'b mut T) -> &'b mut U {
         let addr = obj as *mut _ as usize + self.offset;
         unsafe { &mut *(addr as *mut U) }
     }
