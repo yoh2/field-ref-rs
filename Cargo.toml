@@ -7,5 +7,6 @@ description = "Field reference (like a member pointer to non-static data field i
 categories = [ "data-structures" ]
 license = "MIT"
 readme = "README.md"
+edition = "2018"
 
 [dependencies]

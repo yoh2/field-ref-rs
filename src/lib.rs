@@ -6,10 +6,7 @@
 //! Subfield of type `U` which is contained by `T` can be obtained via `FieldRef<T, U>`.
 //!
 //! ```
-//! #[macro_use]
-//! extern crate field_ref;
-//!
-//! use field_ref::{GetField, GetFieldMut};
+//! use field_ref::{GetField, GetFieldMut, field_ref_of};
 //!
 //! struct Foo(u32, u32, f64);
 //! struct Bar {
@@ -43,10 +40,7 @@
 //! Other field such as struct field of type `T` can also be obtain as `Option<&T>` via `OptionFieldRef`.
 //!
 //! ```
-//! #[macro_use]
-//! extern crate field_ref;
-//!
-//! use field_ref::{GetField, GetFieldMut, OptionFieldRef};
+//! use field_ref::{GetField, GetFieldMut, OptionFieldRef, opt_field_ref_of};
 //!
 //! struct Foo {
 //!     x: i32,
@@ -106,9 +100,6 @@ impl<T, U> FieldRef<T, U> {
     /// # Examples
     ///
     /// ```
-    /// #[macro_use]
-    /// extern crate field_ref;
-    ///
     /// use field_ref::FieldRef;
     ///
     /// #[repr(C)]
@@ -130,8 +121,6 @@ impl<T, U> FieldRef<T, U> {
     /// # Examples
     ///
     /// ```
-    /// extern crate field_ref;
-    ///
     /// use field_ref::FieldRef;
     ///
     /// struct Foo(u32, u32, f64);
@@ -152,8 +141,6 @@ impl<T, U> FieldRef<T, U> {
     /// # Examples
     ///
     /// ```
-    /// extern crate field_ref;
-    ///
     /// use field_ref::FieldRef;
     ///
     /// struct Foo(u32, u32, f64);
@@ -179,8 +166,7 @@ impl<T, U> FieldRef<T, U> {
     /// # Examples
     ///
     /// ```
-    /// #[macro_use]
-    /// extern crate field_ref;
+    /// use field_ref::field_ref_of;
     ///
     /// struct Foo(u32, u32, f64);
     ///
@@ -205,8 +191,7 @@ impl<T, U> FieldRef<T, U> {
     /// # Examples
     ///
     /// ```
-    /// #[macro_use]
-    /// extern crate field_ref;
+    /// use field_ref::field_ref_of;
     ///
     /// struct Foo(u32, u32, f64);
     ///
@@ -227,8 +212,7 @@ impl<T, U> FieldRef<T, U> {
     /// # Examples
     ///
     /// ```
-    /// #[macro_use]
-    /// extern crate field_ref;
+    /// use field_ref::field_ref_of;
     ///
     /// struct Foo(u32, u32, f64);
     /// struct Bar {
@@ -301,10 +285,7 @@ pub trait OptionFieldRef<'x> where Self: Copy {
     /// # Examples
     ///
     /// ```
-    /// #[macro_use]
-    /// extern crate field_ref;
-    ///
-    /// use field_ref::OptionFieldRef;
+    /// use field_ref::{OptionFieldRef, opt_field_ref_of};
     ///
     /// enum E {
     ///     A(i32, char),
@@ -326,10 +307,7 @@ pub trait OptionFieldRef<'x> where Self: Copy {
     /// # Examples
     ///
     /// ```
-    /// #[macro_use]
-    /// extern crate field_ref;
-    ///
-    /// use field_ref::OptionFieldRef;
+    /// use field_ref::{OptionFieldRef, opt_field_ref_of};
     ///
     /// #[derive(Debug, Eq, PartialEq)]
     /// enum E {
@@ -351,10 +329,7 @@ pub trait OptionFieldRef<'x> where Self: Copy {
     /// # Examples
     ///
     /// ```
-    /// #[macro_use]
-    /// extern crate field_ref;
-    ///
-    /// use field_ref::OptionFieldRef;
+    /// use field_ref::{OptionFieldRef, opt_field_ref_of};
     ///
     /// enum E1 {
     ///     A(i32),
@@ -479,10 +454,7 @@ pub trait GetField where Self: Sized {
     /// # Examples
     ///
     /// ```
-    /// #[macro_use]
-    /// extern crate field_ref;
-    ///
-    /// use field_ref::GetField;
+    /// use field_ref::{GetField, field_ref_of};
     ///
     /// struct Foo(u32, u32, f64);
     ///
@@ -505,10 +477,7 @@ pub trait GetField where Self: Sized {
 /// # Examples
 ///
 /// ```
-/// #[macro_use]
-/// extern crate field_ref;
-///
-/// use field_ref::FieldRef;
+/// use field_ref::{FieldRef, field_ref_of};
 ///
 /// struct Foo(u32, u32);
 ///
@@ -536,10 +505,7 @@ pub trait GetFieldMut where Self: Sized {
     /// # Examples
     ///
     /// ```
-    /// #[macro_use]
-    /// extern crate field_ref;
-    ///
-    /// use field_ref::GetFieldMut;
+    /// use field_ref::{GetFieldMut, field_ref_of};
     ///
     /// struct Foo(u32, u32, f64);
     ///
@@ -588,10 +554,7 @@ impl<S: Sized> GetFieldMut for S {
 /// # Examples
 ///
 /// ```
-/// #[macro_use]
-/// extern crate field_ref;
-///
-/// use field_ref::{GetField, GetFieldMut, OptionFieldRef};
+/// use field_ref::{GetField, GetFieldMut, OptionFieldRef, opt_field_ref_of};
 ///
 /// struct Foo {
 ///     x: i32,
@@ -635,26 +598,26 @@ impl<S: Sized> GetFieldMut for S {
 macro_rules! opt_field_ref_of {
     ($e:path { $f:tt } $(=> $fs:tt)*) => {
         $crate::EnumFieldRef::new(
-            enum_field_extractor!($e => $f $(=> $fs)*),
-            enum_field_extractor!($e => $f $(=> $fs)*, mut)
+            $crate::enum_field_extractor!($e => $f $(=> $fs)*),
+            $crate::enum_field_extractor!($e => $f $(=> $fs)*, mut)
         )
     };
 
     ($e:path { $f:tt } $(=> $fs:tt)* & $($tts:tt)+) => {
         $crate::EnumFieldRef::new(
-            enum_field_extractor!($e => $f $(=> $fs)*),
-            enum_field_extractor!($e => $f $(=> $fs)*, mut)
+            $crate::enum_field_extractor!($e => $f $(=> $fs)*),
+            $crate::enum_field_extractor!($e => $f $(=> $fs)*, mut)
         )
-            .chain(opt_field_ref_of!($($tts)+))
+            .chain($crate::opt_field_ref_of!($($tts)+))
     };
 
     ($t:ty $(=> $f:tt)+) => {
-        field_ref_of!($t $(=> $f)+).as_opt_field_ref()
+        $crate::field_ref_of!($t $(=> $f)+).as_opt_field_ref()
     };
 
     ($t:ty $(=> $f:tt)+ & $($tts:tt)+) => {
-        field_ref_of!($t $(=> $f)+).as_opt_field_ref()
-            .chain(opt_field_ref_of!($($tts)+))
+        $crate::field_ref_of!($t $(=> $f)+).as_opt_field_ref()
+            .chain($crate::opt_field_ref_of!($($tts)+))
     };
 }
 

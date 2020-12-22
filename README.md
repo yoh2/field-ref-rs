@@ -7,10 +7,7 @@ Field reference (like a member pointer to non-static data field in C++) for Rust
 Examples:
 
 ```Rust
-#[macro_use]
-extern crate field_ref;
-
-use field_ref::{GetField, GetFieldMut};
+use field_ref::{GetField, GetFieldMut, field_ref_of};
 
 struct Foo(u32, u32, f64);
 struct Bar {
@@ -42,10 +39,7 @@ fn main() {
 
 
 ```Rust
-#[macro_use]
-extern crate field_ref;
-
-use field_ref::{GetField, GetFieldMut, OptionFieldRef};
+use field_ref::{GetField, GetFieldMut, OptionFieldRef, opt_field_ref_of};
 
 struct Foo {
     x: i32,
