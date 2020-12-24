@@ -1,6 +1,6 @@
 [package]
 name = "field-ref"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["yoh2 <yoh2.sdj@gmail.com>"]
 repository = "https://github.com/yoh2/field-ref-rs"
 description = "Field reference (like a member pointer to non-static data field in C++) for Rust￼"
